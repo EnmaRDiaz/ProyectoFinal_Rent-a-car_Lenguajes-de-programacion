@@ -24,7 +24,7 @@ public class Pago {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int idPago;
 
-    @Column(name="estadoPago")
+    @Column(name="estadopago")
     private boolean estadoPago;
 
     @Column(name="fechapago")
