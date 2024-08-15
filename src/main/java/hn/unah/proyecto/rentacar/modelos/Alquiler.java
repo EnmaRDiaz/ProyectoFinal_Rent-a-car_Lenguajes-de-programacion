@@ -23,8 +23,6 @@ public class Alquiler {
     @Column(name="idalquiler")
     private int idAlquiler;
 
-    private int idCliente;
-
     private int vin;
     
     @Column(name="fechainicio")
