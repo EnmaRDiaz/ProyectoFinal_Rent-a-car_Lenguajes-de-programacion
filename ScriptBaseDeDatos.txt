@@ -1,0 +1,80 @@
+CREATE DATABASE rentavehiculos;
+
+USE rentavehiculos;
+
+CREATE TABLE ciudad(
+    idCiudad INT PRIMARY KEY,
+    nombre VARCHAR(50),
+    estado VARCHAR(50),
+    pais VARCHAR(50)
+);
+
+CREATE TABLE cliente(
+    idCliente INT PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    direccion VARCHAR(100),
+    telefono VARCHAR(15),
+    email VARCHAR(50),
+    fechaRegistro DATE
+);
+
+CREATE TABLE vehiculo(
+    vin INT PRIMARY KEY,
+    marca VARCHAR(50),
+    modelo VARCHAR(50),
+    anio INT,
+    color VARCHAR(20),
+    disponibilidad BOOLEAN,
+    precioDiario DECIMAL(10,2),
+    idCiudad INT,
+    FOREIGN KEY (idCiudad) REFERENCES ciudad(idCiudad)
+);
+
+CREATE TABLE alquiler(
+    idAlquiler INT AUTO_INCREMENT PRIMARY KEY,
+    idCliente INT,
+    vin INT,
+    fechaInicio DATE,
+    fechaFin DATE,
+    costoTotal DECIMAL(10,2),
+    ciudadOrigen VARCHAR(50),
+    ciudadEntrega VARCHAR(50),
+    FOREIGN KEY (idCliente) REFERENCES cliente(idCliente),
+    FOREIGN KEY (vin) REFERENCES vehiculo(vin)
+);
+
+CREATE TABLE EEV (
+    idEstadoEntrega INT AUTO_INCREMENT PRIMARY KEY,
+    vin INT,
+    fechaInspeccion DATE,
+    descripcionDanio VARCHAR(255),
+    costoEstimado DECIMAL,
+    nivelDanio VARCHAR(50),
+    FOREIGN KEY (vin) REFERENCES vehiculo(vin)
+);
+
+CREATE TABLE mantenimiento(
+    idMantenimiento INT PRIMARY KEY,
+    vin INT,
+    fechaMantenimiento DATE,
+    descripcion VARCHAR(255),
+    costo DECIMAL(10,2),
+    FOREIGN KEY (vin) REFERENCES vehiculo(vin)
+);
+
+CREATE TABLE pago(
+    idPago INT AUTO_INCREMENT PRIMARY KEY,
+    idAlquiler INT,
+    estadoPago BOOLEAN,
+    fechaPago DATE,
+    monto DECIMAL(10,2),
+    FOREIGN KEY (idAlquiler) REFERENCES alquiler(idAlquiler)
+);
+
+
+
+
+
+
+
