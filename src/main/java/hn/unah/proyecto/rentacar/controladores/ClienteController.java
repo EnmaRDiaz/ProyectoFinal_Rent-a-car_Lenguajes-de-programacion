@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.servicios.ClienteServicio;
 
@@ -17,7 +18,7 @@ import hn.unah.proyecto.rentacar.servicios.ClienteServicio;
 
 
 @RestController
-@RequestMapping("/api/rentacar")
+@RequestMapping("/api/rentacar/clientes")
 public class ClienteController {
 
     @Autowired
@@ -29,9 +30,15 @@ public class ClienteController {
     }
 
     @GetMapping("/buscar/cliente/{idCliente}")
-    public Cliente getMethodName(@PathVariable int idCliente) {
+    public Cliente buscarCliente(@PathVariable int idCliente) {
         return this.clienteServicio.buscarPoridCliente(idCliente);
     }
+
+    @PostMapping("/crear/renta/{idCliente}")
+    public Cliente crearAlquiler(@PathVariable int idCliente, @RequestBody Alquiler nvoAlquiler) {
+        return this.clienteServicio.crearAlquiler(idCliente, nvoAlquiler);
+    }
+    
     
     
     
