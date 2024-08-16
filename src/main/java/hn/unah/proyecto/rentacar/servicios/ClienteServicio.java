@@ -1,16 +1,19 @@
 package hn.unah.proyecto.rentacar.servicios;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import hn.unah.proyecto.rentacar.dtos.registroVentas;
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.modelos.EEV;
 import hn.unah.proyecto.rentacar.modelos.Pago;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
+import hn.unah.proyecto.rentacar.repositorios.AlquilerRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
@@ -26,6 +29,9 @@ public class ClienteServicio {
 
     @Autowired
     private ciudadRepositorio ciudadRepositorio;
+
+    @Autowired
+    private AlquilerRepositorio alquilerRepositorio;
 
     private final int DIFERENCIA_ENTREGA = 1000;
 
@@ -83,6 +89,8 @@ public class ClienteServicio {
             disponibilidadVehiculo.setCiudad(this.ciudadRepositorio.findByNombre(ciudadEntrega));
         }
         estadoPago.setEstadoPago(true);
+        estadoPago.setMonto(estadoPago.getMonto()+nvoEev.getCostoEstimado());
+        alquiler.setCostoTotal(estadoPago.getMonto());
         alquiler.setPago(estadoPago);
         //Sacar el vehiculo del alquiler, y añadir el EEV
         List<EEV> eev = disponibilidadVehiculo.getEevs();
@@ -98,6 +106,21 @@ public class ClienteServicio {
         clienteAlquilers.set(clienteAlquilers.size()-1, alquiler);
         return this.clienteRepositorio.save(consultarCliente);
     }
+
+    public registroVentas registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
+        registroVentas informe = new registroVentas();
+        List<Alquiler> alquilerEnMedio = this.alquilerRepositorio.findByFechaFinBetween(fechaInicio, fechaFin);
+        List<Cliente> clientesEnMedio = this.clienteRepositorio.findByFechaRegistroBetween(fechaInicio, fechaFin);
+        double gananciaNeta = 0.0;
+        for (Alquiler calculoAlquiler: alquilerEnMedio) {
+            gananciaNeta += calculoAlquiler.getCostoTotal(); 
+        }
+        informe.setClientesNuevos(clientesEnMedio.size());
+        informe.setGananciaNeta(gananciaNeta);
+        informe.setNumeroAlquiler(alquilerEnMedio.size());
+
+        return informe;
+    } 
 
     public Pago crearPago(Alquiler alquiler, Vehiculo vehiculo){
         int diasEntre = (int) ChronoUnit.DAYS.between(alquiler.getFechaInicio(), alquiler.getFechaFin());
@@ -119,13 +142,13 @@ public class ClienteServicio {
     //Comprueba que el ultimo alquiler sea pagado
     public boolean comprobarUltimoAlquiler(int idCliente){
         Cliente cliente = this.clienteRepositorio.findById(idCliente).get();
-        if(cliente.getAlquiler()!=null){
-            List<Alquiler> Alquilers = cliente.getAlquiler();
-            Alquiler ultimoAlquiler = Alquilers.get(Alquilers.size()-1);
-            Pago pagoAlquiler = ultimoAlquiler.getPago();
-            return pagoAlquiler.isEstadoPago();
+        if(cliente.getAlquiler().isEmpty()){
+            return true;
         }
-        return true;
+        List<Alquiler> Alquilers = cliente.getAlquiler();
+        Alquiler ultimoAlquiler = Alquilers.get(Alquilers.size()-1);
+        Pago pagoAlquiler = ultimoAlquiler.getPago();
+        return pagoAlquiler.isEstadoPago();
     }
 
     public boolean comprobarExistencia(int idCliente){

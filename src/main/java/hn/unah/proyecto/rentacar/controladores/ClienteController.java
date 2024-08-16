@@ -1,8 +1,10 @@
 package hn.unah.proyecto.rentacar.controladores;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hn.unah.proyecto.rentacar.dtos.registroVentas;
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.modelos.EEV;
@@ -43,9 +46,6 @@ public class ClienteController {
         return this.clienteServicio.crearAlquiler(idCliente, vin, nvoAlquiler);
     }
     
-    
-    
-    
     @PostMapping("/registrar/cliente")
     public Cliente registrarCliente(@RequestBody Cliente nvoCliente) {
         return this.clienteServicio.registrarCliente(nvoCliente); 
@@ -55,6 +55,12 @@ public class ClienteController {
     public Cliente finAlquiler(@RequestParam int idCliente, @RequestParam String ciudadEntrega, @RequestBody EEV nvoEev) {
         return this.clienteServicio.finAlquiler(idCliente, ciudadEntrega, nvoEev);
     }
+
+    @GetMapping("/registro/venta")
+    public registroVentas registroDeVentas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        return this.clienteServicio.registroEntreFechas(fechaInicio, fechaFin);
+    }
+    
 
     
 }
