@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
@@ -34,9 +35,9 @@ public class ClienteController {
         return this.clienteServicio.buscarPoridCliente(idCliente);
     }
 
-    @PostMapping("/crear/renta/{idCliente}")
-    public Cliente crearAlquiler(@PathVariable int idCliente, @RequestBody Alquiler nvoAlquiler) {
-        return this.clienteServicio.crearAlquiler(idCliente, nvoAlquiler);
+    @PostMapping("/crear/renta/")
+    public Cliente crearAlquiler(@RequestParam int idCliente, @RequestParam int vin, @RequestBody Alquiler nvoAlquiler) {
+        return this.clienteServicio.crearAlquiler(idCliente, vin, nvoAlquiler);
     }
     
     

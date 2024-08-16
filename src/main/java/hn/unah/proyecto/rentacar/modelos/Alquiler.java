@@ -25,8 +25,6 @@ public class Alquiler {
     @Column(name="idalquiler")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int idAlquiler;
-
-    private int vin;
     
     @Column(name="fechainicio")
     private LocalDate fechaInicio;
@@ -51,5 +49,7 @@ public class Alquiler {
     @OneToOne(mappedBy="alquiler", cascade=CascadeType.ALL)
     private Pago pago;
     
-
+    @ManyToOne
+    @JoinColumn(name="vin")
+    private Vehiculo vehiculo;
 }

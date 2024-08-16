@@ -27,7 +27,7 @@ public class Mantenimiento {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "vin", referencedColumnName = "vin")
-    private Vehiculo vehiculo;
+    private Vehiculo vehiculoMantenimiento;
 
     @Column(name = "fechamantenimiento")
     private LocalDate fechaMantenimiento;

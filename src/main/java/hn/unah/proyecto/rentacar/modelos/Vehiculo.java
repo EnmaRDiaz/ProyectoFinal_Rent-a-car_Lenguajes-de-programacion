@@ -43,9 +43,13 @@ public class Vehiculo {
     @JoinColumn(name = "idciudad", referencedColumnName = "idciudad")
     private Ciudad ciudad;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculoEev", cascade = CascadeType.ALL)
     private List<EEV> eevs;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculoMantenimiento", cascade = CascadeType.ALL)
     private List<Mantenimiento> mantenimientos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="vehiculo")
+    private List<Alquiler> alquilers;
 }
