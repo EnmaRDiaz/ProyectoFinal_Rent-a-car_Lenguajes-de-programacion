@@ -51,10 +51,9 @@ public class ClienteController {
         return this.clienteServicio.registrarCliente(nvoCliente); 
     }
 
-    @PutMapping("/fin/alquiler/{idCliente}")
-    public Cliente putMethodName(@PathVariable int idCliente, @RequestBody EEV nvoEev) {
-        
-        return this.clienteServicio.finAlquiler(idCliente, nvoEev);
+    @PutMapping("/fin/alquiler/")
+    public Cliente finAlquiler(@RequestParam int idCliente, @RequestParam String ciudadEntrega, @RequestBody EEV nvoEev) {
+        return this.clienteServicio.finAlquiler(idCliente, ciudadEntrega, nvoEev);
     }
 
     

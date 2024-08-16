@@ -13,6 +13,7 @@ import hn.unah.proyecto.rentacar.modelos.Pago;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
 
 @Service
 public class ClienteServicio {
@@ -22,6 +23,11 @@ public class ClienteServicio {
 
     @Autowired
     private VehiculoRepositorio vehiculoRepositorio;
+
+    @Autowired
+    private ciudadRepositorio ciudadRepositorio;
+
+    private final int DIFERENCIA_ENTREGA = 1000;
 
     public List<Cliente> mostrarClientes(){
         return this.clienteRepositorio.findAll();
@@ -42,8 +48,9 @@ public class ClienteServicio {
     //Mejorar Codigo
     public Cliente crearAlquiler(int idCliente, long vin, Alquiler nvoAlquiler){
         Vehiculo vehiculo = this.vehiculoRepositorio.findById(vin).get();
-        vehiculo.setDisponibilidad(false);
-        if (comprobarExistencia(idCliente)){
+        //Comprueba si el usuario existe ademas de eso comprueba si el auto esta disponible, y que el ultimo alquiler que hizo sea pagado
+        if (comprobarExistencia(idCliente) && vehiculo.isDisponibilidad() && comprobarUltimoAlquiler(idCliente)){
+            vehiculo.setDisponibilidad(false);
             Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).get();
             Pago pago = crearPago(nvoAlquiler, vehiculo);
             nvoAlquiler.setCostoTotal(pago.getMonto());
@@ -61,23 +68,33 @@ public class ClienteServicio {
         return null;
     }
 
-    //Falta calcular el pago final si el auto fue devuelto en otra ciudad
-    public Cliente finAlquiler(int idCliente, EEV nvoEev){
+    public Cliente finAlquiler(int idCliente, String ciudadEntrega, EEV nvoEev){
+        //Consultar al cliente y conseguir su alquiler mas reciente.
         Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).get();
         List<Alquiler> clienteAlquilers = consultarCliente.getAlquiler();
         Alquiler alquiler = clienteAlquilers.get(clienteAlquilers.size()-1);
+        //Finalizar el pago
         Pago estadoPago = alquiler.getPago();
+        Vehiculo disponibilidadVehiculo = alquiler.getVehiculo();
+        //añade al precio si el auto fue entregado en otra ciudad y le cambia la ciudad al auto
+        if(!alquiler.getCiudadOrigen().equals(ciudadEntrega)){
+            alquiler.setCiudadEntrega(ciudadEntrega);
+            estadoPago = recalculoDePago(estadoPago);
+            disponibilidadVehiculo.setCiudad(this.ciudadRepositorio.findByNombre(ciudadEntrega));
+        }
         estadoPago.setEstadoPago(true);
         alquiler.setPago(estadoPago);
-        Vehiculo disponibilidadVehiculo = alquiler.getVehiculo();
+        //Sacar el vehiculo del alquiler, y añadir el EEV
         List<EEV> eev = disponibilidadVehiculo.getEevs();
         nvoEev.setVehiculoEev(disponibilidadVehiculo);
         eev.add(nvoEev);
         disponibilidadVehiculo.setEevs(eev);
+        //Determinar si el auto tiene daños y si no los tiene poner el auto como disponible
         if(nvoEev.getCostoEstimado()==0){
             disponibilidadVehiculo.setDisponibilidad(true);
             alquiler.setVehiculo(disponibilidadVehiculo);
         }
+        //Actualizar el alquiler del registro de alquileres
         clienteAlquilers.set(clienteAlquilers.size()-1, alquiler);
         return this.clienteRepositorio.save(consultarCliente);
     }
@@ -91,6 +108,24 @@ public class ClienteServicio {
         double monto = vehiculo.getPrecioDiario()*diasEntre;
         nvoPago.setMonto(monto);
         return nvoPago;
+    }
+
+    public Pago recalculoDePago(Pago pago){
+        double monto = pago.getMonto()+DIFERENCIA_ENTREGA;
+        pago.setMonto(monto);
+        return pago;
+    }
+
+    //Comprueba que el ultimo alquiler sea pagado
+    public boolean comprobarUltimoAlquiler(int idCliente){
+        Cliente cliente = this.clienteRepositorio.findById(idCliente).get();
+        if(cliente.getAlquiler()!=null){
+            List<Alquiler> Alquilers = cliente.getAlquiler();
+            Alquiler ultimoAlquiler = Alquilers.get(Alquilers.size()-1);
+            Pago pagoAlquiler = ultimoAlquiler.getPago();
+            return pagoAlquiler.isEstadoPago();
+        }
+        return true;
     }
 
     public boolean comprobarExistencia(int idCliente){
