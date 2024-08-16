@@ -30,7 +30,7 @@ public class EEV {
     private Vehiculo vehiculoEev;
 
     @Column(name = "fechainspeccion")
-    private LocalDate fechaInspeccionDate;
+    private LocalDate fechaInspeccion;
 
     @Column(name = "descripciondanio")
     private String descripcionDanio;

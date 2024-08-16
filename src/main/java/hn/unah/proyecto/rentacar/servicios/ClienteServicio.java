@@ -39,6 +39,7 @@ public class ClienteServicio {
         return this.clienteRepositorio.findById(idCliente).get();
     }
 
+    //Mejorar Codigo
     public Cliente crearAlquiler(int idCliente, long vin, Alquiler nvoAlquiler){
         Vehiculo vehiculo = this.vehiculoRepositorio.findById(vin).get();
         vehiculo.setDisponibilidad(false);
@@ -60,14 +61,25 @@ public class ClienteServicio {
         return null;
     }
 
+    //Falta calcular el pago final si el auto fue devuelto en otra ciudad
     public Cliente finAlquiler(int idCliente, EEV nvoEev){
         Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).get();
-
-
-
-        return consultarCliente;
-
-
+        List<Alquiler> clienteAlquilers = consultarCliente.getAlquiler();
+        Alquiler alquiler = clienteAlquilers.get(clienteAlquilers.size()-1);
+        Pago estadoPago = alquiler.getPago();
+        estadoPago.setEstadoPago(true);
+        alquiler.setPago(estadoPago);
+        Vehiculo disponibilidadVehiculo = alquiler.getVehiculo();
+        List<EEV> eev = disponibilidadVehiculo.getEevs();
+        nvoEev.setVehiculoEev(disponibilidadVehiculo);
+        eev.add(nvoEev);
+        disponibilidadVehiculo.setEevs(eev);
+        if(nvoEev.getCostoEstimado()==0){
+            disponibilidadVehiculo.setDisponibilidad(true);
+            alquiler.setVehiculo(disponibilidadVehiculo);
+        }
+        clienteAlquilers.set(clienteAlquilers.size()-1, alquiler);
+        return this.clienteRepositorio.save(consultarCliente);
     }
 
     public Pago crearPago(Alquiler alquiler, Vehiculo vehiculo){
