@@ -34,6 +34,9 @@ public class Vehiculo {
     private String color;
 
     private boolean disponibilidad;
+    
+    @Column(name="imagenauto")
+    private String imagenAuto;
 
     @Column(name = "preciodiario")
     private double precioDiario;
