@@ -49,6 +49,6 @@ public class Vehiculo {
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
     private List<Mantenimiento> mantenimientos;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo")
     private List<Alquiler> alquilers;
 }
