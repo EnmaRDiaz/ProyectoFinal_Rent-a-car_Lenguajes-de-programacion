@@ -56,7 +56,7 @@ CREATE TABLE EEV (
 );
 
 CREATE TABLE mantenimiento(
-    idMantenimiento INT PRIMARY KEY,
+    idMantenimiento INT AUTO_INCREMENT PRIMARY KEY,
     vin INT,
     fechaMantenimiento DATE,
     descripcion VARCHAR(255),
