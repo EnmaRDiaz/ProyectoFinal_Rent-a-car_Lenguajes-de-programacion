@@ -22,12 +22,12 @@ public class Mantenimiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idmantenimiento")
-    private long idMantenimiento;
+    private int idMantenimiento;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "vin", referencedColumnName = "vin")
-    private Vehiculo vehiculoMantenimiento;
+    private Vehiculo vehiculo;
 
     @Column(name = "fechamantenimiento")
     private LocalDate fechaMantenimiento;

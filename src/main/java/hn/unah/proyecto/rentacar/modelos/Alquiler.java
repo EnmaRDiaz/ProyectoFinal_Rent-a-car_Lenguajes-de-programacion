@@ -48,8 +48,9 @@ public class Alquiler {
 
     @OneToOne(mappedBy="alquiler", cascade=CascadeType.ALL)
     private Pago pago;
-    
+
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="vin")
+    @JoinColumn(name = "vin", referencedColumnName = "vin")
     private Vehiculo vehiculo;
 }
