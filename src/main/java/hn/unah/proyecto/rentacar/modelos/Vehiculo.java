@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,8 +20,7 @@ import lombok.Data;
 public class Vehiculo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long vin;
+    private int vin;
 
     private String marca;
 
@@ -33,7 +30,7 @@ public class Vehiculo {
 
     private String color;
 
-    private boolean disponibilidad;
+    private Boolean disponibilidad;
 
     @Column(name = "preciodiario")
     private double precioDiario;
@@ -43,13 +40,12 @@ public class Vehiculo {
     @JoinColumn(name = "idciudad", referencedColumnName = "idciudad")
     private Ciudad ciudad;
 
-    @OneToMany(mappedBy = "vehiculoEev", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
     private List<EEV> eevs;
 
-    @OneToMany(mappedBy = "vehiculoMantenimiento", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
     private List<Mantenimiento> mantenimientos;
 
-    @JsonIgnore
-    @OneToMany(mappedBy="vehiculo")
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
     private List<Alquiler> alquilers;
 }

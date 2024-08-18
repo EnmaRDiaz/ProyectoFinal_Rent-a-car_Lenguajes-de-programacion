@@ -22,15 +22,15 @@ public class EEV {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idestadoentrega")
-    private long idEstadoEntrega;
+    private int idEstadoEntrega;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "vin", referencedColumnName = "vin")
-    private Vehiculo vehiculoEev;
+    private Vehiculo vehiculo;
 
     @Column(name = "fechainspeccion")
-    private LocalDate fechaInspeccion;
+    private LocalDate fechaInspeccionDate;
 
     @Column(name = "descripciondanio")
     private String descripcionDanio;

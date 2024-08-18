@@ -16,7 +16,7 @@ import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.repositorios.AlquilerRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
-import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.CiudadRepositorio;
 
 @Service
 public class ClienteServicio {
@@ -28,7 +28,7 @@ public class ClienteServicio {
     private VehiculoRepositorio vehiculoRepositorio;
 
     @Autowired
-    private ciudadRepositorio ciudadRepositorio;
+    private CiudadRepositorio ciudadRepositorio;
 
     @Autowired
     private AlquilerRepositorio alquilerRepositorio;
@@ -52,27 +52,44 @@ public class ClienteServicio {
     }
 
     //Mejorar Codigo
-    public Cliente crearAlquiler(int idCliente, long vin, Alquiler nvoAlquiler){
-        Vehiculo vehiculo = this.vehiculoRepositorio.findById(vin).get();
-        //Comprueba si el usuario existe ademas de eso comprueba si el auto esta disponible, y que el ultimo alquiler que hizo sea pagado
-        if (comprobarExistencia(idCliente) && vehiculo.isDisponibilidad() && comprobarUltimoAlquiler(idCliente)){
+    public Cliente crearAlquiler(int idCliente, int vin, Alquiler nvoAlquiler) {
+        Vehiculo vehiculo = this.vehiculoRepositorio.findById(vin).orElse(null);
+    
+        if (vehiculo == null) {
+            return null;
+        }
+    
+        if (comprobarExistencia(idCliente) 
+            && Boolean.TRUE.equals(vehiculo.getDisponibilidad()) // Maneja el caso donde disponibilidad puede ser null
+            && comprobarUltimoAlquiler(idCliente)) {
+    
             vehiculo.setDisponibilidad(false);
-            Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).get();
+            Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).orElse(null);
+    
+            if (consultarCliente == null) {
+                return null;
+            }
+    
             Pago pago = crearPago(nvoAlquiler, vehiculo);
             nvoAlquiler.setCostoTotal(pago.getMonto());
             nvoAlquiler.setPago(pago);
             nvoAlquiler.setVehiculo(vehiculo);
+    
             List<Alquiler> alquilerCliente = consultarCliente.getAlquiler();
             nvoAlquiler.setCliente(consultarCliente);
+    
             List<Alquiler> alquilerVehiculo = vehiculo.getAlquilers();
             alquilerVehiculo.add(nvoAlquiler);
             vehiculo.setAlquilers(alquilerVehiculo);
+    
             alquilerCliente.add(nvoAlquiler);
             consultarCliente.setAlquiler(alquilerCliente);
+    
             return this.clienteRepositorio.save(consultarCliente);
         }
+    
         return null;
-    }
+    }    
 
     public Cliente finAlquiler(int idCliente, String ciudadEntrega, EEV nvoEev){
         //Consultar al cliente y conseguir su alquiler mas reciente.
@@ -94,7 +111,7 @@ public class ClienteServicio {
         alquiler.setPago(estadoPago);
         //Sacar el vehiculo del alquiler, y añadir el EEV
         List<EEV> eev = disponibilidadVehiculo.getEevs();
-        nvoEev.setVehiculoEev(disponibilidadVehiculo);
+        nvoEev.setVehiculo(disponibilidadVehiculo);             // Cambiado de nvoEev.setVehiculoEev(disponibilidadVehiculo) a nvoEev.setVehiculo(disponibilidadVehiculo);
         eev.add(nvoEev);
         disponibilidadVehiculo.setEevs(eev);
         //Determinar si el auto tiene daños y si no los tiene poner el auto como disponible
