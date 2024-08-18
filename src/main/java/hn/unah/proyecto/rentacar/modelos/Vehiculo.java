@@ -32,6 +32,9 @@ public class Vehiculo {
 
     private Boolean disponibilidad;
 
+    @Column(name = "imagenauto")
+    private String imagenAuto;
+
     @Column(name = "preciodiario")
     private double precioDiario;
 

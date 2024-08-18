@@ -28,6 +28,7 @@ CREATE TABLE vehiculo(
     disponibilidad BOOLEAN,
     precioDiario DECIMAL(10,2),
     idCiudad INT,
+    imagenAuto VARCHAR(255),
     FOREIGN KEY (idCiudad) REFERENCES ciudad(idCiudad)
 );
 
