@@ -14,9 +14,9 @@ import hn.unah.proyecto.rentacar.modelos.EEV;
 import hn.unah.proyecto.rentacar.modelos.Pago;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.repositorios.AlquilerRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.CiudadRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
-import hn.unah.proyecto.rentacar.repositorios.CiudadRepositorio;
 
 @Service
 public class ClienteServicio {
@@ -93,35 +93,39 @@ public class ClienteServicio {
 
     public Cliente finAlquiler(int idCliente, String ciudadEntrega, EEV nvoEev){
         //Consultar al cliente y conseguir su alquiler mas reciente.
+        
         Cliente consultarCliente = this.clienteRepositorio.findById(idCliente).get();
         List<Alquiler> clienteAlquilers = consultarCliente.getAlquiler();
-        Alquiler alquiler = clienteAlquilers.get(clienteAlquilers.size()-1);
-        //Finalizar el pago
-        Pago estadoPago = alquiler.getPago();
-        Vehiculo disponibilidadVehiculo = alquiler.getVehiculo();
-        //añade al precio si el auto fue entregado en otra ciudad y le cambia la ciudad al auto
-        if(!alquiler.getCiudadOrigen().equals(ciudadEntrega)){
-            alquiler.setCiudadEntrega(ciudadEntrega);
-            estadoPago = recalculoDePago(estadoPago);
-            disponibilidadVehiculo.setCiudad(this.ciudadRepositorio.findByNombre(ciudadEntrega));
+        if(!clienteAlquilers.isEmpty()){
+            Alquiler alquiler = clienteAlquilers.get(clienteAlquilers.size()-1);
+            //Finalizar el pago
+            Pago estadoPago = alquiler.getPago();
+            Vehiculo disponibilidadVehiculo = alquiler.getVehiculo();
+            //añade al precio si el auto fue entregado en otra ciudad y le cambia la ciudad al auto
+            if(!alquiler.getCiudadOrigen().equals(ciudadEntrega)){
+                alquiler.setCiudadEntrega(ciudadEntrega);
+                estadoPago = recalculoDePago(estadoPago);
+                disponibilidadVehiculo.setCiudad(this.ciudadRepositorio.findByNombre(ciudadEntrega));
+            }
+            estadoPago.setEstadoPago(true);
+            estadoPago.setMonto(estadoPago.getMonto()+nvoEev.getCostoEstimado());
+            alquiler.setCostoTotal(estadoPago.getMonto());
+            alquiler.setPago(estadoPago);
+            //Sacar el vehiculo del alquiler, y añadir el EEV
+            List<EEV> eev = disponibilidadVehiculo.getEevs();
+            nvoEev.setVehiculo(disponibilidadVehiculo);             // Cambiado de nvoEev.setVehiculoEev(disponibilidadVehiculo) a nvoEev.setVehiculo(disponibilidadVehiculo);
+            eev.add(nvoEev);
+            disponibilidadVehiculo.setEevs(eev);
+            //Determinar si el auto tiene daños y si no los tiene poner el auto como disponible
+            if(nvoEev.getCostoEstimado()==0){
+                disponibilidadVehiculo.setDisponibilidad(true);
+                alquiler.setVehiculo(disponibilidadVehiculo);
+            }
+            //Actualizar el alquiler del registro de alquileres
+            clienteAlquilers.set(clienteAlquilers.size()-1, alquiler);
+            return this.clienteRepositorio.save(consultarCliente);
         }
-        estadoPago.setEstadoPago(true);
-        estadoPago.setMonto(estadoPago.getMonto()+nvoEev.getCostoEstimado());
-        alquiler.setCostoTotal(estadoPago.getMonto());
-        alquiler.setPago(estadoPago);
-        //Sacar el vehiculo del alquiler, y añadir el EEV
-        List<EEV> eev = disponibilidadVehiculo.getEevs();
-        nvoEev.setVehiculo(disponibilidadVehiculo);             // Cambiado de nvoEev.setVehiculoEev(disponibilidadVehiculo) a nvoEev.setVehiculo(disponibilidadVehiculo);
-        eev.add(nvoEev);
-        disponibilidadVehiculo.setEevs(eev);
-        //Determinar si el auto tiene daños y si no los tiene poner el auto como disponible
-        if(nvoEev.getCostoEstimado()==0){
-            disponibilidadVehiculo.setDisponibilidad(true);
-            alquiler.setVehiculo(disponibilidadVehiculo);
-        }
-        //Actualizar el alquiler del registro de alquileres
-        clienteAlquilers.set(clienteAlquilers.size()-1, alquiler);
-        return this.clienteRepositorio.save(consultarCliente);
+        return null;
     }
 
     public registroVentas registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
