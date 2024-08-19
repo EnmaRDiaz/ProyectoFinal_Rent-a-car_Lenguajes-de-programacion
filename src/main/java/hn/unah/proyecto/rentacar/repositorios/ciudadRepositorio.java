@@ -7,7 +7,7 @@ import hn.unah.proyecto.rentacar.modelos.Ciudad;
 
 
 @Repository
-public interface CiudadRepositorio extends JpaRepository<Ciudad, Integer> {
+public interface ciudadRepositorio extends JpaRepository<Ciudad, Integer> {
 
     Ciudad findByNombre(String nombre);
 
