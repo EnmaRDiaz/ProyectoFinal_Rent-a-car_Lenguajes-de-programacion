@@ -2,11 +2,13 @@ package hn.unah.proyecto.rentacar.servicios;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import hn.unah.proyecto.rentacar.dtos.AlquilerDTO;
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.modelos.EEV;
@@ -127,9 +129,17 @@ public class ClienteServicio {
         return null;
     }
 
-    public List<Alquiler> registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
-        List<Alquiler> alquilerEnMedio = this.alquilerRepositorio.findByFechaFinBetween(fechaInicio, fechaFin);
-        return alquilerEnMedio;
+    public List<AlquilerDTO> registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
+        List<Alquiler> alquilerTodo= this.alquilerRepositorio.findByFechaFinBetween(fechaInicio, fechaFin);
+        List<AlquilerDTO> alquilerDTOs = new ArrayList<>();
+        for (Alquiler alquiler: alquilerTodo) {
+            AlquilerDTO alquilerDTO = new AlquilerDTO();
+            alquilerDTO.setAlquiler(alquiler);
+            alquilerDTO.setIdCliente(this.alquilerRepositorio.findidClienteByidAlquiler(alquiler.getIdAlquiler()));
+            alquilerDTO.setVehiculo(alquiler.getVehiculo());
+            alquilerDTOs.add(alquilerDTO);
+        }
+        return alquilerDTOs;
     } 
 
     public Pago crearPago(Alquiler alquiler, Vehiculo vehiculo){
