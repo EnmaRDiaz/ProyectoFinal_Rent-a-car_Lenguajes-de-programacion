@@ -14,7 +14,7 @@ import hn.unah.proyecto.rentacar.modelos.EEV;
 import hn.unah.proyecto.rentacar.modelos.Pago;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.repositorios.AlquilerRepositorio;
-import hn.unah.proyecto.rentacar.repositorios.CiudadRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
 
@@ -28,7 +28,7 @@ public class ClienteServicio {
     private VehiculoRepositorio vehiculoRepositorio;
 
     @Autowired
-    private CiudadRepositorio ciudadRepositorio;
+    private ciudadRepositorio ciudadRepositorio;
 
     @Autowired
     private AlquilerRepositorio alquilerRepositorio;

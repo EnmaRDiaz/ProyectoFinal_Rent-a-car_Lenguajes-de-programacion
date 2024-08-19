@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import hn.unah.proyecto.rentacar.modelos.Ciudad;
 import hn.unah.proyecto.rentacar.modelos.Mantenimiento;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
-import hn.unah.proyecto.rentacar.repositorios.CiudadRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.MantenimientoRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
 
 @Service
 public class VehiculoServicio {
@@ -19,7 +19,7 @@ public class VehiculoServicio {
     private VehiculoRepositorio vehiculoRepositorio;
 
     @Autowired
-    private CiudadRepositorio ciudadRepositorio;
+    private ciudadRepositorio ciudadRepositorio;
 
     @Autowired
     private MantenimientoRepositorio mantenimientoRepositorio;
@@ -60,6 +60,11 @@ public class VehiculoServicio {
     //BuscarPorModelo(String modelo): devuelve una lista de vehículos de la misma marca.
     public List<Vehiculo> buscarPorModelo(String modelo) {
         return vehiculoRepositorio.findByModelo(modelo);
+    }
+    
+    //BuscarPorDisponibilidad
+    public List<Vehiculo> buscarPorDisponibilidad(Boolean disponibilidad) {
+        return vehiculoRepositorio.findByDisponibilidad(disponibilidad);
     }
 
 }

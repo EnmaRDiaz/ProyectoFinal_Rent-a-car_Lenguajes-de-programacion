@@ -11,4 +11,5 @@ import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 public interface VehiculoRepositorio extends JpaRepository<Vehiculo, Integer> {
     List<Vehiculo> findByModelo(String modelo);
     List<Vehiculo> findByMarca(String marca);
+    List<Vehiculo> findByDisponibilidad(Boolean disponibilidad);
 }

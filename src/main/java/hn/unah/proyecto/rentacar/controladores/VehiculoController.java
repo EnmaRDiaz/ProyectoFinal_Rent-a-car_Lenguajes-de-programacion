@@ -3,16 +3,16 @@ package hn.unah.proyecto.rentacar.controladores;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import hn.unah.proyecto.rentacar.modelos.Mantenimiento;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.servicios.VehiculoServicio;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -46,5 +46,10 @@ public class VehiculoController {
     @GetMapping("/buscar/modelo/{modelo}")
     public List<Vehiculo> buscarPorModelo(@PathVariable String modelo) {
         return this.vehiculoServicio.buscarPorModelo(modelo);
+    }
+
+    @GetMapping("/buscar/disponibilidad/{disponibilidad}")
+    public List<Vehiculo> buscarPorDisponibilidad(@PathVariable Boolean disponibilidad) {
+        return this.vehiculoServicio.buscarPorDisponibilidad(disponibilidad);
     }
 }
