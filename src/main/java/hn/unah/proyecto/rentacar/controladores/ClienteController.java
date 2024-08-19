@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hn.unah.proyecto.rentacar.dtos.registroVentas;
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.modelos.EEV;
@@ -57,7 +56,7 @@ public class ClienteController {
     }
 
     @GetMapping("/registro/venta")
-    public registroVentas registroDeVentas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+    public List<Alquiler> registroDeVentas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         return this.clienteServicio.registroEntreFechas(fechaInicio, fechaFin);
     }
     

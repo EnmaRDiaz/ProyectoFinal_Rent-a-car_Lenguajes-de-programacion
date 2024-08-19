@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hn.unah.proyecto.rentacar.dtos.CiudadDTO;
 import hn.unah.proyecto.rentacar.modelos.Mantenimiento;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.servicios.VehiculoServicio;
+
 
 
 
@@ -28,9 +30,9 @@ public class VehiculoController {
         return this.vehiculoServicio.mostrarVehiculos();
     }
 
-    @PostMapping("/crear/vehiculo/{idCiudad}")
-    public Vehiculo crearVehiculo(@RequestBody Vehiculo nvoVehiculo, @PathVariable int idCiudad) {
-        return this.vehiculoServicio.crearVehiculo(nvoVehiculo, idCiudad);
+    @PostMapping("/crear/vehiculo/{nombre}")
+    public Vehiculo crearVehiculo(@RequestBody Vehiculo nvoVehiculo, @PathVariable String nombre) {
+        return this.vehiculoServicio.crearVehiculo(nvoVehiculo, nombre);
     }
     
     @PostMapping("/crear/mantenimiento/{vin}")
@@ -52,4 +54,15 @@ public class VehiculoController {
     public List<Vehiculo> buscarPorDisponibilidad(@PathVariable Boolean disponibilidad) {
         return this.vehiculoServicio.buscarPorDisponibilidad(disponibilidad);
     }
+
+    @GetMapping("/buscar/id/{vin}")
+    public CiudadDTO buscarPorDisponibilidad(@PathVariable int vin) {
+        return this.vehiculoServicio.buscarPorIdCiudad(vin);
+    }
+
+    @GetMapping("/buscar/vehiculo/{vin}")
+    public Vehiculo buscarPorId(@PathVariable int vin) {
+        return this.vehiculoServicio.buscarPorID(vin);
+    }
+    
 }

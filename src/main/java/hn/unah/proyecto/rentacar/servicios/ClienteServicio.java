@@ -7,16 +7,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hn.unah.proyecto.rentacar.dtos.registroVentas;
 import hn.unah.proyecto.rentacar.modelos.Alquiler;
 import hn.unah.proyecto.rentacar.modelos.Cliente;
 import hn.unah.proyecto.rentacar.modelos.EEV;
 import hn.unah.proyecto.rentacar.modelos.Pago;
 import hn.unah.proyecto.rentacar.modelos.Vehiculo;
 import hn.unah.proyecto.rentacar.repositorios.AlquilerRepositorio;
-import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.ClienteRepositorio;
 import hn.unah.proyecto.rentacar.repositorios.VehiculoRepositorio;
+import hn.unah.proyecto.rentacar.repositorios.ciudadRepositorio;
 
 @Service
 public class ClienteServicio {
@@ -128,19 +127,9 @@ public class ClienteServicio {
         return null;
     }
 
-    public registroVentas registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
-        registroVentas informe = new registroVentas();
+    public List<Alquiler> registroEntreFechas(LocalDate fechaInicio, LocalDate fechaFin){
         List<Alquiler> alquilerEnMedio = this.alquilerRepositorio.findByFechaFinBetween(fechaInicio, fechaFin);
-        List<Cliente> clientesEnMedio = this.clienteRepositorio.findByFechaRegistroBetween(fechaInicio, fechaFin);
-        double gananciaNeta = 0.0;
-        for (Alquiler calculoAlquiler: alquilerEnMedio) {
-            gananciaNeta += calculoAlquiler.getCostoTotal(); 
-        }
-        informe.setClientesNuevos(clientesEnMedio.size());
-        informe.setGananciaNeta(gananciaNeta);
-        informe.setNumeroAlquiler(alquilerEnMedio.size());
-
-        return informe;
+        return alquilerEnMedio;
     } 
 
     public Pago crearPago(Alquiler alquiler, Vehiculo vehiculo){
